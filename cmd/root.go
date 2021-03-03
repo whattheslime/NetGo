@@ -69,6 +69,8 @@ func checkArgs(cmd *cobra.Command, args []string) error {
 
 func init() {
 	// Add persistent flags
+	rootCmd.PersistentFlags().StringVarP(
+		&Command, "exec", "e", "", "Executes the given command")
 	rootCmd.PersistentFlags().BoolVarP(
 		&Verbose, "verbose", "v", false, "Set verbose output")
 	rootCmd.PersistentFlags().BoolVarP(
