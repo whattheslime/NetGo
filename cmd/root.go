@@ -21,7 +21,7 @@ var (
 
 	rootCmd = &cobra.Command{
 		Use:   "netgo [hostname] [port]",
-		Short: "Basically... ncat implementation",
+		Short: "A basic implementation of ncat in go language",
 		Args:  checkArgs,
 		Run: func(cmd *cobra.Command, args []string) {
 			protocol := "tcp"
