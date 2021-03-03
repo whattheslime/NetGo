@@ -75,7 +75,7 @@ func init() {
 		&Listen, "listen", "l", false, 
 		"Bind and listen for incoming connections")
 	rootCmd.PersistentFlags().BoolVarP(
-		&isUDP, "udp", "u", false, "verbose output")
+		&isUDP, "udp", "u", false, "Use UDP instead of default TCP")
 	rootCmd.PersistentFlags().BoolVar(
 		&isTLS, "tls", false, "Connect or listen with TLS")
 }

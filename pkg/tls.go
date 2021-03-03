@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"crypto/tls"
 	"crypto/x509"
-	"fmt"
 	"log"
 )
 
@@ -29,8 +28,9 @@ func (ntObj NetObject) RunTLSClient(cmd string) {
 	// Checking connection state
 	state := conn.ConnectionState()
 	for _, v := range state.PeerCertificates {
-		fmt.Println(x509.MarshalPKIXPublicKey(v.PublicKey))
-		fmt.Println(v.Subject)
+		// fmt.Println(x509.MarshalPKIXPublicKey(v.PublicKey))
+		log.Println("Issuer:", v.Issuer)
+		log.Println("Subject:", v.Subject)
 	}
 	log.Println("Handshake complete: ", state.HandshakeComplete)
 	log.Println("Protocol negotiation done: ",
