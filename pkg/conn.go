@@ -1,11 +1,9 @@
-package conn
+package netgo
 
 import (
 	"io"
 	"net"
 	"os"
-	"os/signal"
-	"syscall"
 	"os/exec"
 )
 
@@ -15,16 +13,7 @@ type NetObject struct {
 	Service string
 }
 
-func connCloseHandler(conn net.Conn) {
-	c := make(chan os.Signal)
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-	go func() {
-		<-c
-		conn.Close()
-		os.Exit(0)
-	}()
-}
-
+// Manage connection for different behavior
 func handleConn(conn net.Conn, binPath string) {
 	if binPath != "" {
 		// Execute command and send Standard I/O net.Conn
@@ -38,6 +27,5 @@ func handleConn(conn net.Conn, binPath string) {
 		go io.Copy(os.Stderr, conn)
 		go io.Copy(os.Stdout, conn)
 		io.Copy(conn, os.Stdin)
-
 	}
 }
