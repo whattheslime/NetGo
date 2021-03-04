@@ -8,7 +8,7 @@ import (
 )
 
 // TLS Client
-func (ntObj NetObject) RunTLSClient(cmd string) {
+func (nObj NetObject) RunTLSClient(cmd string) {
 	// SSL Configuration
 	cert, err := tls.LoadX509KeyPair("certs/client.pem", "certs/client.key")
 	if err != nil {
@@ -18,7 +18,7 @@ func (ntObj NetObject) RunTLSClient(cmd string) {
 		InsecureSkipVerify: true}
 
 	// Try connection
-	conn, err := tls.Dial(ntObj.Type, ntObj.Service, &config)
+	conn, err := tls.Dial(nObj.Type, nObj.Service, &config)
 	if err != nil {
 		log.Fatalln("Connection failed:", err)
 	}
@@ -42,7 +42,7 @@ func (ntObj NetObject) RunTLSClient(cmd string) {
 }
 
 // TLS Server
-func (ntObj NetObject) RunTLSServer(cmd string) {
+func (nObj NetObject) RunTLSServer(cmd string) {
 	// SSL Configuration
 	cert, err := tls.LoadX509KeyPair("certs/server.pem", "certs/server.key")
 	if err != nil {
@@ -52,11 +52,11 @@ func (ntObj NetObject) RunTLSServer(cmd string) {
 	config.Rand = rand.Reader
 
 	// Start listening
-	listener, err := tls.Listen(ntObj.Type, ntObj.Service, &config)
+	listener, err := tls.Listen(nObj.Type, nObj.Service, &config)
 	if err != nil {
 		log.Fatal("Binding error:", err)
 	}
-	log.Println("Listening on", ntObj.Service, "...")
+	log.Println("Listening on", nObj.Service, "...")
 
 	// Wait for connection
 	conn, err := listener.Accept()

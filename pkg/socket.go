@@ -6,9 +6,9 @@ import (
 )
 
 // Socket Client
-func (ntObj NetObject) RunClient(cmd string) {
+func (nObj NetObject) RunClient(cmd string) {
 	// Try connection
-	conn, err := net.Dial(ntObj.Type, ntObj.Service)
+	conn, err := net.Dial(nObj.Type, nObj.Service)
 	if err != nil {
 		log.Println("Connection refused")
 		return
@@ -22,13 +22,13 @@ func (ntObj NetObject) RunClient(cmd string) {
 }
 
 // Socket Server
-func (ntObj NetObject) RunServer(cmd string) {
+func (nObj NetObject) RunServer(cmd string) {
 	// Start listening
-	listener, err := net.Listen(ntObj.Type, ntObj.Service)
+	listener, err := net.Listen(nObj.Type, nObj.Service)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Listening on", ntObj.Service, "...")
+	log.Println("Listening on", nObj.Service, "...")
 	defer listener.Close()
 
 	// Wait for connection

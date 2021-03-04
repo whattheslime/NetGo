@@ -11,37 +11,37 @@ import (
 
 
 var (
-	Listen  bool
-	isTLS   bool
-	isUDP   bool
-	Verbose  bool
 	Command string
 	Hostname string
-	Port     string
+	TLS bool
+	UDP bool
+	Listen bool
+	Port string
+	Verbose bool
 
 	rootCmd = &cobra.Command{
-		Use:   "netgo [hostname] [port]",
+		Use:   fmt.Sprintf("%s [hostname] [port]", os.Args[0]),
 		Short: "A basic implementation of ncat in go language",
 		Args:  checkArgs,
 		Run: func(cmd *cobra.Command, args []string) {
 			protocol := "tcp"
-			if isUDP {
+			if UDP {
 				protocol = "udp"
 			}
 
-			netObj := conn.NetObject{
+			nObj := conn.NetObject{
 				Type:    protocol,
 				Service: fmt.Sprintf("%s:%s", Hostname, Port),
 			}
 			switch {
-			case isTLS && Listen:
-				netObj.RunTLSServer(Command)
-			case isTLS:
-				netObj.RunTLSClient(Command)
+			case TLS && Listen:
+				nObj.RunTLSServer(Command)
+			case TLS:
+				nObj.RunTLSClient(Command)
 			case Listen:
-				netObj.RunServer(Command)
+				nObj.RunServer(Command)
 			default:
-				netObj.RunClient(Command)
+				nObj.RunClient(Command)
 			}
 		},
 	}
@@ -76,10 +76,10 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(
 		&Listen, "listen", "l", false, 
 		"Bind and listen for incoming connections")
-	rootCmd.PersistentFlags().BoolVarP(
-		&isUDP, "udp", "u", false, "Use UDP instead of default TCP")
+	// rootCmd.PersistentFlags().BoolVarP(
+	//	&UDP, "udp", "u", false, "Use UDP instead of default TCP")
 	rootCmd.PersistentFlags().BoolVar(
-		&isTLS, "tls", false, "Connect or listen with TLS")
+		&TLS, "tls", false, "Connect or listen with TLS")
 }
 
 // Execute executes the root command.
