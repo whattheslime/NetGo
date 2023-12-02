@@ -5,8 +5,6 @@ all: windows linux
 certifs:
 	mkdir -p certs
 
-	rm certs/*
-
 	echo "[+] Make server cert"
 	openssl req -new -nodes -x509 -out certs/server.pem -keyout certs/server.key -days 3650 -subj "/C=US/ST=NRW/L=Earth/O=Company/OU=IT/CN=www.random.com/emailAddress=john@doe.com"
 
