@@ -10,7 +10,9 @@ import (
 	"math/big"
 	"log"
 	"time"
+	"net"
 )
+
 
 func genCert() ([]byte, []byte){
 	// Generate a private key
@@ -65,7 +67,7 @@ func loadTLSConfig(cert string, key string) (tls.Certificate, error) {
 }
 
 // TLS Client
-func (nObj NetObject) RunTLSClient(cmd string, cert string, key string) {
+func (nObj NetObject) TLSClient(conn net.Conn, cert string, key string) (net.Conn) {
 	// TLS Configuration
 	tlsCert, err := loadTLSConfig(cert, key)
 	if err != nil {
@@ -75,31 +77,25 @@ func (nObj NetObject) RunTLSClient(cmd string, cert string, key string) {
 		InsecureSkipVerify: true}
 
 	// Try connection
-	conn, err := tls.Dial(nObj.Type, nObj.Service, &config)
-	if err != nil {
-		log.Fatalln("Connection failed:", err)
-	}
-	defer conn.Close()
-	log.Println("Connected to", conn.RemoteAddr())
+	tlsConn := tls.Client(conn, &config)
 
 	// Checking connection state
-	state := conn.ConnectionState()
+	state := tlsConn.ConnectionState()
 	for _, v := range state.PeerCertificates {
 		// fmt.Println(x509.MarshalPKIXPublicKey(v.PublicKey))
 		log.Println("Issuer:", v.Issuer)
 		log.Println("Subject:", v.Subject)
 	}
+	
 	log.Println("Handshake complete: ", state.HandshakeComplete)
 	log.Println("Protocol negotiation done: ",
 		state.NegotiatedProtocolIsMutual)
 
-	// Handle connection
-	handleConn(conn, cmd)
-	log.Println("Broken pipe")
+	return tlsConn
 }
 
-// TLS Server
-func (nObj NetObject) RunTLSServer(cmd string, cert string, key string) {
+
+func (nObj NetObject) TLSServer(cert string, key string) net.Listener {
 	// TLS Configuration
 	tlsCert, err := loadTLSConfig(cert, key)
 	if err != nil {
@@ -113,28 +109,6 @@ func (nObj NetObject) RunTLSServer(cmd string, cert string, key string) {
 	if err != nil {
 		log.Fatal("Binding error:", err)
 	}
-	log.Println("Listening on", nObj.Service, "...")
 
-	// Wait for connection
-	conn, err := listener.Accept()
-	if err != nil {
-		log.Fatalln("Connection failed:", err)
-	}
-	defer conn.Close()
-	log.Println("Connection receive from", conn.RemoteAddr())
-	listener.Close()
-
-	// Checking connection state
-	tlsconn, ok := conn.(*tls.Conn)
-	if ok {
-		log.Print("ok=true")
-		state := tlsconn.ConnectionState()
-		for _, v := range state.PeerCertificates {
-			log.Print(x509.MarshalPKIXPublicKey(v.PublicKey))
-		}
-	}
-
-	// Handle connection
-	handleConn(conn, cmd)
-	log.Println("Connection with", conn.RemoteAddr(), "closed")
+	return listener
 }
