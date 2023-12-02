@@ -96,8 +96,11 @@ func handleConn(conn net.Conn, binPath string, recvOnly bool, sendOnly bool) {
 
 func SendData(inReader *bufio.Reader) {
     for {
-        toSendData, _ := inReader.ReadString('\n')
+        toSendData, errorData := inReader.ReadString('\n')
         clientsMutex.Lock()
+        if errorData == io.EOF {
+            break
+        }
         for _, client := range clients {
             fmt.Fprint(client.Conn, toSendData)
         }
